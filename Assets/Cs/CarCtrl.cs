@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CarCtrl : MonoBehaviour {
 
@@ -12,26 +13,36 @@ public class CarCtrl : MonoBehaviour {
 	public bool CarSpeedDown = false;
 	public bool DriftWheel = false;
 	public GameObject[] Wheel;
-
+	public GameObject WheelPivot;
+	public Vector3 pivot;
+	public Text speedtext;
+	public Text speedRottext;
+	public Text XRot;
+	public Text ZRot;
 
 
 	bool accelOn = false;
 
 	void Start () {
 	
-
+		WheelPivot = Wheel [3];
 
 	}
 	
 
 	void Update () {
+
+		pivot = WheelPivot.transform.position;
 	
-		Debug.Log (Input.acceleration.x);
+		XRot.text = Input.acceleration.x.ToString();
+		ZRot.text = Input.acceleration.y.ToString();
+		speedtext.text = CarSpeed.ToString ();
+		speedRottext.text = CarRotSpeed.ToString ();
 
 
 		if (CarSpeedDown == true) {
 		
-			CarSpeed -= 1;
+			CarSpeed -= 0.5f;
 
 			if (CarSpeed <= 0) 
 			{
@@ -45,7 +56,7 @@ public class CarCtrl : MonoBehaviour {
 		if (accelOn == true) 
 		{
 		
-			CarSpeed += 0.2f;
+			CarSpeed += 0.1f;
 			this.gameObject.transform.Translate (Vector3.forward * CarSpeed * Time.deltaTime);
 		
 			if (CarSpeed >= MaxSpeed) 
@@ -56,11 +67,11 @@ public class CarCtrl : MonoBehaviour {
 		
 		}
 
-		if (CarSpeed > 0.1 &&  Input.acceleration.x < 0) {
+		if (CarSpeed > 0 &&  Input.acceleration.x < 0) {
 			this.gameObject.transform.Rotate(-Vector3.up * CarRotSpeed * Time.deltaTime);
 			
 		}
-		else if (CarSpeed > 0.1 && Input.acceleration.x > 0) {
+		else if (CarSpeed > 0 && Input.acceleration.x > 0) {
 			this.gameObject.transform.Rotate(Vector3.up * CarRotSpeed * Time.deltaTime);
 			
 		}
@@ -97,24 +108,27 @@ public class CarCtrl : MonoBehaviour {
 
 
 
+
+
 	
 	}
 
 
 	public void Drift()
 	{
+		CarSpeedDown = false;
 		DriftWheel = true;
 
 
 		CarSpeed = CarSpeed/2;
-		CarRotSpeed = 25;
+		CarRotSpeed = 100;
 	
 	
 	}
 
 	public void DriftExit()
 	{
-	
+		CarSpeedDown = true;
 		CarRotSpeed = 50;
 		DriftWheel = false;
 	
