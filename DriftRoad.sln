@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{5745A709-0F78-7D74-AF82-A7AB6B1C79A5}") = "DriftRoad", "Assembly-CSharp.csproj", "{4158C591-1A28-6ACF-BDC8-741F37447439}"
 EndProject
+Project("{5745A709-0F78-7D74-AF82-A7AB6B1C79A5}") = "DriftRoad", "Assembly-CSharp-Editor.csproj", "{67C5FCA8-2D1F-48D4-4D1A-8CD83860C99C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,12 +15,15 @@ Global
 		{4158C591-1A28-6ACF-BDC8-741F37447439}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4158C591-1A28-6ACF-BDC8-741F37447439}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4158C591-1A28-6ACF-BDC8-741F37447439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67C5FCA8-2D1F-48D4-4D1A-8CD83860C99C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67C5FCA8-2D1F-48D4-4D1A-8CD83860C99C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67C5FCA8-2D1F-48D4-4D1A-8CD83860C99C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67C5FCA8-2D1F-48D4-4D1A-8CD83860C99C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-<<<<<<< HEAD
-																																																				GlobalSection(MonoDevelopProperties) = preSolution
+																																																																																																																																																																																																														GlobalSection(MonoDevelopProperties) = preSolution
 =======
 																																																										GlobalSection(MonoDevelopProperties) = preSolution
 >>>>>>> e62ad56031b619e8301321be6196b2e2d54fd774
