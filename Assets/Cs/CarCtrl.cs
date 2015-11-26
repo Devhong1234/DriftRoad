@@ -66,7 +66,7 @@ public class CarCtrl : MonoBehaviour {
 		ResetRot = this.gameObject.transform.rotation;
 		this.gameObject.GetComponent<Animation>().Play("Run");
 
-		GetComponent<Rigidbody>().centerOfMass =new Vector3(0,-1,0);
+		//GetComponent<Rigidbody>().centerOfMass =new Vector3(0,-1,0);
 	}
 	
 
@@ -148,7 +148,16 @@ public class CarCtrl : MonoBehaviour {
 		CarSpeed += 0.1f;
 		score += 1;
 		//this.gameObject.transform.Translate (Vector3.forward * CarSpeed * Time.deltaTime);// 트랜스폼이동 
-		this.gameObject.GetComponent<Rigidbody> ().position += transform.forward * CarSpeed * Time.deltaTime; // 물직적용
+
+
+
+
+
+		//this.gameObject.GetComponent<Rigidbody> ().position += transform.forward * CarSpeed * Time.deltaTime; // 물직적용
+
+
+
+
 		//this.gameObject.GetComponent<Rigidbody> ().velocity = new Vector3 (this.gameObject.GetComponent<Rigidbody> ().velocity.x ,this.gameObject.GetComponent<Rigidbody> ().velocity.y,this.gameObject.GetComponent<Rigidbody> ().velocity.z * 2);
 
 		if (CarSpeed >= MaxSpeed) //MaxSpeed Limit

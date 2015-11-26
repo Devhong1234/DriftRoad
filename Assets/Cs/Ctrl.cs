@@ -4,18 +4,24 @@ using UnityEngine.UI;
 
 public class Ctrl : MonoBehaviour {
 
-	
+	public Transform CenterOfMass;
 
+	public float MaxTorque;
 	public float CarSpeed;
-	public float MaxSpeed = 20;
+	public float MaxSpeed = 500;
 	public float CarRotSpeed = 50;
 	public float CarMaxRotSpeed = 200;
 
+	public float prevSteerAngle;
 
+	public float highestSpeed = 50f;
+	public float lowSpeedSteerAngle = 10f;
+	public float highSpeedSteerAngle = 1f;
 
 
 	public GameObject[] Wheel;
-
+	public WheelCollider[] WheelCol;
+	public Rigidbody rb;
 
 	
 	public float _half_width;
@@ -42,10 +48,29 @@ public class Ctrl : MonoBehaviour {
 	{
 
 		_half_width = Screen.width * 0.5f;
-
+		rb = this.GetComponent<Rigidbody>();
+		rb.centerOfMass = CenterOfMass.localPosition;
 	}
 	
+
+	void FixedUpdate()
+	{
+
+
+
+		float speedFactor = rb.velocity.magnitude / highestSpeed;
+		float steerAngle = Mathf.Lerp (lowSpeedSteerAngle, highSpeedSteerAngle,speedFactor);
+		steerAngle *= Input.acceleration.x;
+
+
+		WheelCol[0].steerAngle = steerAngle;
+		WheelCol[1].steerAngle = steerAngle;
 	
+	}
+
+
+
+
 	void Update () {
 		
 
@@ -95,8 +120,10 @@ public class Ctrl : MonoBehaviour {
 		
 		
 		M_Lean ();
-		
-		
+
+
+		prevSteerAngle = WheelCol [0].steerAngle;
+
 	}
 
 
@@ -107,10 +134,11 @@ public class Ctrl : MonoBehaviour {
 	void M_CarSpeedUp()
 	{
 
-		CarSpeed += 0.1f;
+		CarSpeed += 1f;
 
+		WheelCol[2].motorTorque = CarSpeed;
+		WheelCol[3].motorTorque = CarSpeed;
 
-		this.gameObject.GetComponent<Rigidbody> ().position += transform.forward * CarSpeed * Time.deltaTime; // 물직적용
 
 		
 		if (CarSpeed >= MaxSpeed) //MaxSpeed Limit
@@ -126,7 +154,7 @@ public class Ctrl : MonoBehaviour {
 	void M_CarSpeedDown()
 	{
 		
-		CarSpeed -= 0.1f;
+		CarSpeed -= 1f;
 		
 		if (CarSpeed <= 0) // MinSpeed Limit
 		{
@@ -156,7 +184,7 @@ public class Ctrl : MonoBehaviour {
 	
 	
 	
-	
+
 	
 	
 	
@@ -167,18 +195,26 @@ public class Ctrl : MonoBehaviour {
 		
 		if (CarSpeed > 0 && Input.acceleration.x < 0) {
 			
+			for(int i = 0; i < 4; i++)
+			{
+				WheelCol[i].sidewaysFriction.stiffness = 10f;
 			
+			}
 			
 
-			transform.RotateAround(Wheel[0].transform.position,Vector3.up,-1f);
+			//transform.RotateAround(Wheel[0].transform.position,Vector3.up,-1f);
 			
 			
 		}
 		else if (CarSpeed > 0 && Input.acceleration.x > 0) {
 			
-			
+			for(int i = 0; i < 4; i++)
+			{
+				WheelCol[i].sidewaysFriction.stiffness = 10f;
+				
+			}
 
-			transform.RotateAround(Wheel[1].transform.position,Vector3.up,1f);
+			//transform.RotateAround(Wheel[1].transform.position,Vector3.up,1f);
 			
 		}
 		
@@ -241,12 +277,15 @@ public class Ctrl : MonoBehaviour {
 	{
 		
 		if (CarSpeed > 0 &&  Input.acceleration.x < 0) {
-			this.gameObject.transform.Rotate(-Vector3.up * CarRotSpeed * Time.deltaTime);
+
+
+			//this.gameObject.transform.Rotate(-Vector3.up * CarRotSpeed * Time.deltaTime);
 			
 		}
 		
 		else if (CarSpeed > 0 && Input.acceleration.x > 0) {
-			this.gameObject.transform.Rotate(Vector3.up * CarRotSpeed * Time.deltaTime);
+
+			//this.gameObject.transform.Rotate(Vector3.up * CarRotSpeed * Time.deltaTime);
 			
 		}
 	}
