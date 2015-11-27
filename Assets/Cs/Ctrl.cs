@@ -6,6 +6,8 @@ public class Ctrl : MonoBehaviour {
 
 	public Transform CenterOfMass;
 
+	public WheelFrictionCurve[] wfc;
+
 	public float MaxTorque;
 	public float CarSpeed;
 	public float MaxSpeed = 500;
@@ -48,15 +50,21 @@ public class Ctrl : MonoBehaviour {
 	{
 
 		_half_width = Screen.width * 0.5f;
+
 		rb = this.GetComponent<Rigidbody>();
+
 		rb.centerOfMass = CenterOfMass.localPosition;
+
+		wfc = new WheelFrictionCurve[4];
+
+
 	}
 	
 
 	void FixedUpdate()
 	{
 
-
+		Debug.Log (WheelCol[3].brakeTorque);
 
 		float speedFactor = rb.velocity.magnitude / highestSpeed;
 		float steerAngle = Mathf.Lerp (lowSpeedSteerAngle, highSpeedSteerAngle,speedFactor);
@@ -124,6 +132,22 @@ public class Ctrl : MonoBehaviour {
 
 		prevSteerAngle = WheelCol [0].steerAngle;
 
+	
+	
+		for (int i = 0 ; i < WheelCol.Length ; i++)
+		{
+			
+			
+			wfc[i] = WheelCol[i].sidewaysFriction;
+									
+			WheelCol[i].sidewaysFriction = wfc[i];
+			
+		}
+	
+	
+	
+	
+	
 	}
 
 
@@ -134,35 +158,28 @@ public class Ctrl : MonoBehaviour {
 	void M_CarSpeedUp()
 	{
 
-		CarSpeed += 1f;
-
-		WheelCol[2].motorTorque = CarSpeed;
-		WheelCol[3].motorTorque = CarSpeed;
-
+		WheelCol[2].motorTorque = MaxTorque;
+		WheelCol[3].motorTorque = MaxTorque;
+		
+		MaxTorque += 1f;
 
 		
-		if (CarSpeed >= MaxSpeed) //MaxSpeed Limit
+		if (MaxTorque >= MaxSpeed) //MaxSpeed Limit
 		{
-			CarSpeed = MaxSpeed;
+			MaxTorque = MaxSpeed;
 		} 
 
 	}
-
-
-
+	
+	
+	
 	
 	void M_CarSpeedDown()
 	{
 		
-		CarSpeed -= 1f;
+		MaxTorque = 0f;
 		
-		if (CarSpeed <= 0) // MinSpeed Limit
-		{
-			CarSpeed = 0;
-			
-		}
-		
-		this.gameObject.transform.Translate (Vector3.forward * CarSpeed * Time.deltaTime);
+
 		
 	}
 	
@@ -172,13 +189,14 @@ public class Ctrl : MonoBehaviour {
 	void M_CarRotSpeedUp()
 	{
 
-		CarRotSpeed += 1f;
 
+
+		WheelCol[2].motorTorque = MaxTorque;
+		WheelCol[3].motorTorque = MaxTorque;
 		
-		if (CarRotSpeed >= CarMaxRotSpeed) 
-		{
-			CarRotSpeed = CarMaxRotSpeed;
-		} 
+		MaxTorque += 1f;
+		
+
 
 	}
 	
@@ -193,30 +211,28 @@ public class Ctrl : MonoBehaviour {
 	public void M_Drift()
 	{
 		
-		if (CarSpeed > 0 && Input.acceleration.x < 0) {
+		if (CarSpeed > 0 && Input.acceleration.x < 0) 
+		{
 			
-			for(int i = 0; i < 4; i++)
+			for(int i = 0; i < wfc.Length ; i++)
 			{
-				WheelCol[i].sidewaysFriction.stiffness = 10f;
-			
+			wfc[i].stiffness = 100f;
 			}
-			
 
-			//transform.RotateAround(Wheel[0].transform.position,Vector3.up,-1f);
 			
 			
 		}
 		else if (CarSpeed > 0 && Input.acceleration.x > 0) {
 			
-			for(int i = 0; i < 4; i++)
-			{
-				WheelCol[i].sidewaysFriction.stiffness = 10f;
-				
-			}
 
-			//transform.RotateAround(Wheel[1].transform.position,Vector3.up,1f);
-			
+			for(int i = 0; i < wfc.Length ; i++)
+			{
+				wfc[i].stiffness = 100f;
+			}
 		}
+
+			
+
 		
 		
 		
@@ -228,12 +244,30 @@ public class Ctrl : MonoBehaviour {
 	{
 		
 		
-		if(Input.GetTouch(0).position.x < _half_width)
+		if(Input.GetTouch(0).position.x < _half_width && Input.GetTouch(0).phase == TouchPhase.Stationary)
 		{
 
+			WheelCol[2].brakeTorque = 0;
+			WheelCol[3].brakeTorque = 0;
 			CarState = State.CarSpeedUp;
+
+
+
+
+		}
+
+		else if(Input.GetTouch(0).position.x < _half_width && Input.GetTouch(0).phase == TouchPhase.Ended)
+		{
+			
+			WheelCol[2].brakeTorque = 1000;
+			WheelCol[3].brakeTorque = 1000;
+			
+			
+			
 			
 		}
+
+
 		
 		if (Input.touchCount > 1 && Input.GetTouch (1).phase == TouchPhase.Began) 
 		{
@@ -245,9 +279,7 @@ public class Ctrl : MonoBehaviour {
 		else if (Input.touchCount > 1 && Input.GetTouch (1).phase == TouchPhase.Stationary) 
 		{
 
-			CarRotSpeed += 5;
-			CarSpeed -= 0.2f;
-			
+
 			if(CarRotSpeed >= CarMaxRotSpeed)
 			{
 				CarRotSpeed = CarMaxRotSpeed;
@@ -264,8 +296,8 @@ public class Ctrl : MonoBehaviour {
 		else if (Input.touchCount > 1 && Input.GetTouch (1).phase == TouchPhase.Ended) 
 		{
 			
-			CarRotSpeed = 50;
-
+			//CarRotSpeed = 50;
+			//wfc.stiffness = 5f;
 		}
 
 	}
@@ -275,6 +307,11 @@ public class Ctrl : MonoBehaviour {
 
 	public void M_Lean()
 	{
+
+
+
+
+
 		
 		if (CarSpeed > 0 &&  Input.acceleration.x < 0) {
 
